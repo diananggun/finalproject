@@ -1,0 +1,79 @@
+/// <reference types="cypress" />
+
+import { faker } from "@faker-js/faker";
+
+describe("Testing API Alta", () => {
+  let token = "";
+  let productId = "";
+  let productName = "";
+  let productDesc = "";
+  let productPrice = "";
+  let orderId = "";
+
+  before(() => {
+    cy.request("POST", "https://altashop-api.fly.dev/api/auth/login", {
+      email: "diananggun@gmail.com",
+      password: "test1234",
+    }).then((response) => {
+      token = response.body.data;
+    });
+  });
+
+  it("should be able to create new product", () => {
+    const product = {
+      name: faker.commerce.productName(),
+      description: faker.commerce.productDescription(),
+      price: 400,
+      categories: [1],
+    };
+
+    cy.request({
+      method: "POST",
+      url: "https://altashop-api.fly.dev/api/products",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: product,
+    }).then((response) => {
+      expect(response.status).to.eq(200);
+      expect(response.body).to.have.property("data");
+      expect(response.body.data).to.have.property("ID");
+      expect(response.body.data.ID).to.be.a("number");
+      expect(response.body.data).to.deep.contains({
+        Name: product.name,
+        Description: product.description,
+        Price: product.price,
+      });
+      productId = response.body.data.ID;
+      productName = response.body.data.Name;
+      productDesc = response.body.data.Description;
+      productPrice = response.body.data.Price;
+    });
+  });
+
+
+  it("should be able to create new order", () => {
+    const order = [{
+        product_id: productId,
+        quantity: faker.number.int({ min:1, max: 10 }),
+    }];
+
+    cy.request({
+      method: "POST",
+      url: "https://altashop-api.fly.dev/api/orders",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: order,
+    }).then((response) => {
+      expect(response.status).to.eq(200);
+      expect(response.body).to.have.property("data");
+      response.body.data.forEach((order) => {
+      expect(order).to.have.all.keys("ID", "Product", "User", "Quantity");
+      orderId = order.ID;
+    });
+    cy.log(orderId)
+    });
+  });
+
+});
