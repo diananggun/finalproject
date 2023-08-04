@@ -50,12 +50,55 @@ class altaPage {
    }
 
    getEmail() {
-     cy.get('input[type="text"]').eq(0)
+     return cy.get('input[type="text"]').eq(0)
    }
 
    getPassword() {
-     cy.get('input[type="text"]').eq(1)
+     return cy.get('input[type="text"]').eq(1)
    }
+
+   getProductName() {
+    return cy.get('.v-card > .v-card__title')
+   }
+
+   getProductDesc() {
+    return cy.get('.v-card > .v-card__subtitle')
+   }
+
+   getProductDesc() {
+    return cy.get('.v-card > .v-card__subtitle')
+   }
+
+   getPrice() {
+    return cy.get('.v-card > .v-card__actions > .row > .product-price')
+   }
+
+   getProductRating () {
+    return cy.get('.v-card > .v-card__actions > .row > :nth-child(1)')
+   }
+
+   getRating() {
+    return cy.get('.v-rating.v-rating--dense')
+   }
+
+   getStarRating() {
+    return cy.get('.v-icon.notranslate.v-icon--link.fas.fa-star.theme--light.primary--text')
+   }
+
+   getTambah() {
+    return cy.get('.v-list-item__icon > :nth-child(3)')
+   }
+
+   getKurang() {
+    return cy.get('#order-85490 > .v-list-item__icon > :nth-child(1)')
+   }
+
+   getJumlah() {
+    return cy.get('.mx-3')
+   }
+
+  
+
 }
   
 export default new altaPage();
