@@ -13,6 +13,9 @@ let Jumlah
 let Tambah
 let Hitung
 let Kurang
+let Price
+let Total
+let TotalBayar
 
 Cypress.on("uncaught:exception", (err, runnable) => {
   return false;
@@ -105,8 +108,8 @@ describe("Testing website shopping", () => {
 
   it("Should be able to buy products and make payments",() =>{
     altaPage.getAccount().click()
-    cy.get('input[type="text"]').eq(0).type(Cypress.env("EMAIL")).should("have.value", Cypress.env("EMAIL"))
-    cy.get('input[type="text"]').eq(1).type(Cypress.env("PASSWORD")).should("have.value", Cypress.env("PASSWORD"))
+    cy.get('input[type="text"]').eq(0).type(Cypress.env("EMAIL"))
+    cy.get('input[type="text"]').eq(1).type(Cypress.env("PASSWORD"))
     altaPage.getButton().click()
     altaPage.getProductCard().should("be.visible")
     cy.wait(1000)
@@ -158,5 +161,23 @@ describe("Testing website shopping", () => {
     })
   })
 
+  it("should be able to displays the total payment according to the price of the product multiplied by the number of products",() =>{
+    cy.wait(1000)
+    altaPage.getBeli().eq(0).click()
+    altaPage.getBeli().eq(0).click()
+    altaPage.getCart().click()
+    cy.url().should("include", "/order");
+    altaPage.getJumlah().then((element) => {
+      Jumlah = parseInt(element.text().trim()); 
+    })
+    cy.get('.label-price').then((element) => {
+      Price = parseInt(element.text().trim()); 
+      TotalBayar = Jumlah*Price
+    })
+    cy.get('#label-total-bayar').then((element) => {
+      Total = parseInt(element.text().trim()); 
+      expect(TotalBayar).to.equal(Total)
+    })
+  })
  
 });
